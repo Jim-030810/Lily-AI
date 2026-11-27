@@ -1,4 +1,4 @@
-﻿# Lily: a local AI Assistant
+# Lily: a local AI Assistant
 
 Lily is an AI character that runs on your own PC. She listens to your
 microphone, thinks with a local LLM, answers in a cloned voice, and moves a
@@ -118,7 +118,7 @@ Everything runs locally, but be aware of this:
 - Windows only (`.bat` launchers, process-group handling)
 - Needs a capable GPU to run the LLM, TTS, and Whisper at once
 - Written for Japanese first; English works but is less polished
-- you have to use stop.bat even when the porgram is close using X button. (only this way, all the processes are terminated)
+- Closing the window with the X button doesn't stop everything. Use `stop_lily.bat` to terminate all of her processes.
 
 ## License
 
@@ -129,3 +129,17 @@ Whisper, VRM models, voice corpora) keep their own licenses.
 ## Animations
 
 The emotion animations (angry, curious, excited, happy, sad, surprised) are not included. Put your own motion files named like `happy_mocap.json` in `vrm-viewer/public/animations/`. The avatar still works without them, but those emotion animations won't play.
+
+## Credits
+
+Lily's voice is a GPT-SoVITS model trained on the
+[つくよみちゃんコーパス](https://tyc.rei-yumesaki.net/material/corpus/)
+(Tsukuyomi-chan Corpus, CV.夢前黎). The corpus and its audio are **not**
+included in this repo. If you use the corpus yourself, follow its
+[terms of use](https://tyc.rei-yumesaki.net/material/corpus/) and credit it as
+「つくよみちゃんコーパス（CV.夢前黎）」.
+
+Lily's avatar is an original model made by the author in
+[VRoid Studio](https://vroid.com/en/studio). It is not included in this repo.
+
+This project is not affiliated with or endorsed by the Tsukuyomi-chan project.
