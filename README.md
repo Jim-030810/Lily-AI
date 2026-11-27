@@ -1,4 +1,4 @@
-* the loading will take long time depending on your setup. For my Omen 16 gaming laptop 16GB, it take 5 mins.
+* the loading may take a long time depending on your setup. For my Omen 16 gaming laptop 16GB, it take roughly 1 min.
 
 # Lily: a local AI Assistant
 
