@@ -1,3 +1,5 @@
+* the loading will take long time depending on your setup. For my Omen 16 gaming laptop 16GB, it take 5 mins.
+
 # Lily: a local AI Assistant
 
 Lily is an AI character that runs on your own PC. She listens to your
