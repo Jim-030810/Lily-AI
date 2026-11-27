@@ -1,6 +1,6 @@
-﻿# Lily: a local AI VTuber
+﻿# Lily: a local AI Assistant
 
-Lily is an AI VTuber character that runs on your own PC. She listens to your
+Lily is an AI character that runs on your own PC. She listens to your
 microphone, thinks with a local LLM, answers in a cloned voice, and moves a
 VRM avatar with lip-sync, idle animation, and facial expressions. She can
 also read Twitch and Discord chat.
@@ -8,7 +8,6 @@ also read Twitch and Discord chat.
 > **Status:** hobby project, Windows only, work in progress. Expect rough edges.
 
 ## Features
-
 - Voice conversation in Japanese or English, with interruption (barge-in)
 - Local LLM through [Ollama](https://ollama.com) (Qwen2.5), no cloud API needed
 - Speech-to-text with [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
@@ -17,7 +16,7 @@ also read Twitch and Discord chat.
 - Long-term memory (ChromaDB), user profile, and relationship growth
 - Web search with source-checked answers (DuckDuckGo)
 - Screen understanding through a local vision model
-- Music playback, singing, and a code-writing helper window
+- Music playback and a code-writing helper window
 - Twitch chat and Discord input
 
 ## Requirements
@@ -37,8 +36,8 @@ also read Twitch and Discord chat.
 
 1. **Clone and install**
    ```powershell
-   git clone https://github.com/Jim-030810/lily-ai-vtuber.git
-   cd lily-ai-vtuber
+   git clone https://github.com/Jim-030810/Lily-AI.git
+   cd Lily-AI
    python -m venv .venv
    .venv\Scripts\activate
    pip install -r requirements.txt
@@ -96,11 +95,10 @@ or double-click `start_lily.bat`. Use `stop_lily.bat` to stop her.
 | `search for <topic>` / `<topic>について調べて` | Web search, answered from the sources |
 | `look at my screen` / `画面見て` | She describes what's on your screen |
 | `play <song>` / `stop` | Music playback (she stays quiet until the song is over) |
-| `sing <song>` | Singing performance (needs the singing module set up) |
 | `write code for <thing>` | Sends generated code to the coding window |
 | `goodbye` / `さようなら` | Shuts down |
 
-In Twitch chat: `!ask <question>`, `!sing`, `!voice <style>`.
+In Twitch chat: `!ask <question>`, `!voice <style>`.
 
 ## Privacy
 
@@ -115,13 +113,12 @@ Everything runs locally, but be aware of this:
 - **Web search** sends your query to DuckDuckGo.
 - **Twitch/Discord** messages are passed to your local model.
 
-## Project layout
-
 ## Limitations
 
 - Windows only (`.bat` launchers, process-group handling)
 - Needs a capable GPU to run the LLM, TTS, and Whisper at once
 - Written for Japanese first; English works but is less polished
+- you have to use stop.bat even when the porgram is close using X button. (only this way, all the processes are terminated)
 
 ## License
 
@@ -132,4 +129,3 @@ Whisper, VRM models, voice corpora) keep their own licenses.
 ## Animations
 
 The emotion animations (angry, curious, excited, happy, sad, surprised) are not included. Put your own motion files named like `happy_mocap.json` in `vrm-viewer/public/animations/`. The avatar still works without them, but those emotion animations won't play.
-

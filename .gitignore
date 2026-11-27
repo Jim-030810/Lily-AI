@@ -24,3 +24,5 @@ dist/
 *.vrm
 
 vrm-viewer/public/animations/
+
+.history/
