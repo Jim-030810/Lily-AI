@@ -1,0 +1,47 @@
+﻿# Copy this file to config.yaml (next to lily_bot.py) and fill in your own
+# paths. config.yaml is gitignored. Secrets (Discord/Twitch/Google) go in
+# .env, NOT here.
+#
+# Windows paths: use single quotes so backslashes are taken literally.
+
+# Your Discord user ID (optional). Lily treats this user as "Master".
+master_id: ""
+
+ollama:
+  url: "http://127.0.0.1:11434"
+  chat_model: "qwen2.5:7b"
+
+tts:
+  url: "http://127.0.0.1:9880"
+  # How to start the GPT-SoVITS API server (api_v2.py) if it isn't running.
+  server_python_exe: 'C:\path\to\GPT-SoVITS\runtime\python.exe'
+  server_cwd: 'C:\path\to\GPT-SoVITS'
+  # Weights, relative to the GPT-SoVITS working directory.
+  gpt_weights_path: 'GPT_weights_v2/your_model.ckpt'
+  sovits_weights_path: 'SoVITS_weights_v2/your_model.pth'
+  # Your OWN reference clip (a few seconds of clean speech) and its exact
+  # transcript. The transcript must match the clip word for word.
+  reference_audio_path: 'C:\path\to\your_reference.wav'
+  reference_text: "Exact words spoken in the reference clip."
+  reference_lang: "ja"
+  aux_audio_paths: []
+
+vmc:
+  ip: "127.0.0.1"
+  port: 39538
+
+paths:
+  memory_file: "memory.json"
+  code_context_file: "code_context.json"
+  vector_memory_dir: "vector_memory"
+  lily_assets_dir: ""        # optional: folder with emotes/ and context_map.json
+  ffmpeg_path: "ffmpeg"      # or the full path to ffmpeg.exe
+
+vrm_viewer:
+  dir: ""                    # leave empty to use ./vrm-viewer
+  vite_port: 5173
+  vite_host: "127.0.0.1"
+
+animation:
+  python_candidates: []      # optional extra Python interpreters to try
+  script_path: ""            # leave empty to use ./idle_animation.py

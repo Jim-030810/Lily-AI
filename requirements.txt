@@ -1,0 +1,40 @@
+﻿# Core
+numpy
+requests
+httpx
+aiohttp
+python-dotenv
+pyyaml
+psutil
+
+# Chat platforms
+discord.py>=2.2.3
+twitchio<3
+websockets>=13
+
+# Audio / speech
+sounddevice
+soundfile
+soxr
+pydub
+SpeechRecognition
+faster-whisper
+
+# VRM / animation
+python-osc
+scipy
+
+# LLM, memory, vision, search
+ollama
+chromadb
+mss
+pillow
+ddgs
+
+# Music (also needs the VLC app and a JS runtime such as Deno)
+python-vlc
+yt-dlp
+
+# Optional, install separately if you want them:
+#   torch (CUDA build from pytorch.org) - lets Whisper use your GPU
+#   rvc-python - only for render_song_rvc.py

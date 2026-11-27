@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Lily — waking up</title>
+  <style>
+    :root {
+      --bg: #0f1826;
+      --bg-deep: #070b12;
+      --blue: #4d3dfa;
+      --blue-dim: #0400e6;
+      --cyan: #bfc8ff;
+      --ink: #eaf4fa;
+      --ink-dim: #93a8b3;
+      --mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas, Menlo, monospace;
+      --serif: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background: radial-gradient(ellipse at 50% 30%, var(--bg) 0%, var(--bg-deep) 75%);
+      overflow: hidden;
+      font-family: var(--serif);
+      color: var(--ink);
+    }
+
+    #stage {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    /* faint film-grain / vignette so the dark bg doesn't feel flat */
+    #stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 100%, rgba(94, 200, 242, 0.07), transparent 60%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0px, transparent 1px, transparent 2px);
+      pointer-events: none;
+    }
+
+    /* ── the pulse: signature element ── */
+    #pulse-wrap {
+      width: min(520px, 78vw);
+      height: 90px;
+      position: relative;
+    }
+
+    #pulse {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 6px rgba(159, 220, 245, 0.5));
+    }
+
+    #pulse path {
+      fill: none;
+      stroke: var(--cyan);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    #pulse-dot {
+      fill: var(--blue);
+      filter: drop-shadow(0 0 5px rgba(94, 200, 242, 0.9));
+    }
+
+    /* ── percentage ── */
+    #pct {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(48px, 9vw, 76px);
+      letter-spacing: 0.01em;
+      color: var(--ink);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 24px rgba(94, 200, 242, 0.22);
+    }
+
+    #pct sup {
+      font-family: var(--mono);
+      font-size: 0.32em;
+      color: var(--blue);
+      margin-left: 6px;
+      vertical-align: super;
+    }
+
+    /* ── progress rail ── */
+    #rail {
+      width: min(420px, 70vw);
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #rail-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue-dim), var(--blue));
+      border-radius: 2px;
+      transition: width 0.5s cubic-bezier(.22, .61, .36, 1);
+      position: relative;
+    }
+
+    #rail-fill::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      transform: translate(50%, -50%);
+      box-shadow: 0 0 10px 2px rgba(94, 200, 242, 0.85);
+    }
+
+    /* ── log line ── */
+    #log {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      color: var(--ink-dim);
+      min-height: 18px;
+      text-align: center;
+      max-width: 80vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #log .bracket {
+      color: var(--blue-dim);
+    }
+
+    /* ── name mark, quiet, bottom corner ── */
+    #mark {
+      position: absolute;
+      bottom: 28px;
+      left: 32px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(158, 180, 195, 0.5);
+    }
+
+    #mark b {
+      color: rgba(94, 200, 242, 0.65);
+      font-weight: 600;
+    }
+
+    /* ── connection status, quiet, top corner ── */
+    #conn {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(158, 180, 195, 0.45);
+    }
+
+    #conn.live {
+      color: rgba(94, 200, 242, 0.7);
+    }
+
+    /* ── completion flash / handoff ── */
+    #stage.complete #pct {
+      color: var(--blue);
+    }
+
+    #stage.complete #log {
+      color: var(--cyan);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #rail-fill {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="stage">
+    <div id="conn">connecting…</div>
+
+    <div id="pulse-wrap">
+      <svg id="pulse" viewBox="0 0 520 90" preserveAspectRatio="none">
+        <path id="pulse-path" d="" />
+        <circle id="pulse-dot" cx="0" cy="45" r="3.2" />
+      </svg>
+    </div>
+
+    <div id="pct">0<sup>%</sup></div>
+
+    <div id="rail">
+      <div id="rail-fill"></div>
+    </div>
+
+    <div id="log"><span class="bracket">[STARTUP]</span> connecting&hellip;</div>
+
+    <div id="mark">Lily <b>&middot;</b> waking up</div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // ============================================================
+      // CONFIG
+      // Wired to match ws_animation_server.py's actual payload shape:
+      //   { "type": "loading_progress", "percent": 42, "label": "..." }
+      //   { "type": "loading_complete" }
+      // (Not a single unified {type:"loading", complete:bool} message —
+      // that was the original mismatch.)
+      // ============================================================
+      const WS_URL = "ws://127.0.0.1:8765";
+      const RECONNECT_DELAY_MS = 2000;          // retry the real socket on drop, same cadence as lily-viewer.js
+      const DEMO_MODE_IF_NO_CONNECTION = true;  // simulate progress only if the real server never answers
+      const DEMO_TIMEOUT_MS = 4000;
+
+      const pct = document.getElementById("pct");
+      const railFill = document.getElementById("rail-fill");
+      const log = document.getElementById("log");
+      const stage = document.getElementById("stage");
+      const pulsePath = document.getElementById("pulse-path");
+      const pulseDot = document.getElementById("pulse-dot");
+      const conn = document.getElementById("conn");
+
+      let currentPercent = 0;
+      let targetPercent = 0;
+
+      function setProgress(percent, label, complete) {
+        targetPercent = Math.max(0, Math.min(100, percent));
+        if (label) {
+          log.innerHTML = '<span class="bracket">[STARTUP]</span> ' + escapeHtml(label);
+        }
+        railFill.style.width = targetPercent + "%";
+        pct.innerHTML = Math.round(targetPercent) + "<sup>%</sup>";
+        if (complete) {
+          stage.classList.add("complete");
+          log.innerHTML = '<span class="bracket">[STARTUP]</span> ...good morning.';
+          setTimeout(() => {
+            document.dispatchEvent(new CustomEvent("lily-loading-complete"));
+            if (window.electronAPI?.notifyStartupComplete) {
+              window.electronAPI.notifyStartupComplete();
+            }
+          }, 900);
+        }
+      }
+      function escapeHtml(s) {
+        const d = document.createElement("div");
+        d.textContent = s;
+        return d.innerHTML;
+      }
+
+      // ── the pulse waveform, amplitude/speed driven by currentPercent ──
+      let t = 0;
+      function drawPulse() {
+        currentPercent += (targetPercent - currentPercent) * 0.06;
+
+        const w = 520, h = 90, mid = h / 2;
+        const amp = 4 + (currentPercent / 100) * 22;
+        const freq = 0.055 + (currentPercent / 100) * 0.05;
+        const speed = 0.05 + (currentPercent / 100) * 0.09;
+
+        let d = `M 0 ${mid}`;
+        for (let x = 0; x <= w; x += 4) {
+          const base = Math.sin((x * freq) + t * speed) * amp * 0.35;
+          const spike = (currentPercent > 8)
+            ? Math.sin((x * freq * 3) + t * speed * 1.7) * amp * 0.65 * Math.pow(currentPercent / 100, 1.4)
+            : 0;
+          const y = mid + base + spike;
+          d += ` L ${x} ${y.toFixed(2)}`;
+        }
+        pulsePath.setAttribute("d", d);
+
+        const dotX = (t * 40) % w;
+        const dotIdx = Math.round(dotX / 4) * 4;
+        const approxY = mid + Math.sin((dotIdx * freq) + t * speed) * amp * 0.35
+          + (currentPercent > 8 ? Math.sin((dotIdx * freq * 3) + t * speed * 1.7) * amp * 0.65 * Math.pow(currentPercent / 100, 1.4) : 0);
+        pulseDot.setAttribute("cx", dotX);
+        pulseDot.setAttribute("cy", approxY);
+
+        t += 1;
+        requestAnimationFrame(drawPulse);
+      }
+      requestAnimationFrame(drawPulse);
+
+      // ============================================================
+      // WEBSOCKET — live progress from ws_server
+      // ============================================================
+      let connected = false;
+      let demoTimer = null;
+      let demoStarted = false;
+      let reconnectTimer = null;
+
+      function connect() {
+        let socket;
+        try {
+          socket = new WebSocket(WS_URL);
+        } catch (e) {
+          scheduleReconnect();
+          startDemoIfNeeded();
+          return;
+        }
+
+        socket.addEventListener("open", () => {
+          connected = true;
+          if (demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
+          conn.textContent = "live";
+          conn.classList.add("live");
+          log.innerHTML = '<span class="bracket">[STARTUP]</span> connected. syncing…';
+        });
+
+        socket.addEventListener("message", (event) => {
+          let msg;
+          try { msg = JSON.parse(event.data); } catch (e) { return; }
+
+          // Matches ws_animation_server.py exactly:
+          //   notify_loading_progress() -> {type:"loading_progress", percent, label}
+          //   notify_loading_complete() -> {type:"loading_complete"}
+          if (msg.type === "loading_progress") {
+            setProgress(msg.percent ?? 0, msg.label, false);
+          } else if (msg.type === "loading_complete") {
+            setProgress(100, "Ready", true);
+          }
+        });
+
+        socket.addEventListener("close", () => {
+          connected = false;
+          conn.textContent = "reconnecting…";
+          conn.classList.remove("live");
+          scheduleReconnect();
+          startDemoIfNeeded();
+        });
+
+        socket.addEventListener("error", () => {
+          // swallow — close handler fires next and drives reconnect/demo
+        });
+      }
+
+      function scheduleReconnect() {
+        if (reconnectTimer) return;
+        reconnectTimer = setTimeout(() => {
+          reconnectTimer = null;
+          if (!connected) connect();
+        }, RECONNECT_DELAY_MS);
+      }
+
+      function startDemoIfNeeded() {
+        if (!DEMO_MODE_IF_NO_CONNECTION || connected || demoStarted) return;
+        if (demoTimer) return;
+        demoTimer = setTimeout(runDemo, DEMO_TIMEOUT_MS);
+      }
+
+      function runDemo() {
+        if (connected) return;
+        demoStarted = true;
+        conn.textContent = "demo mode";
+        const steps = [
+          [1, "System check... beginning."],
+          [5, "Thoughts... reconnecting."],
+          [12, "Memory circuits... warming."],
+          [37, "Voice module... initializing."],
+          [58, "...testing, testing."],
+          [70, "Ears... online."],
+          [87, "Body... responding."],
+          [91, "Motion functions... syncing."],
+          [95, "Sensors... scanning surroundings."],
+          [100, "...good morning."],
+        ];
+        let i = 0;
+        const tick = () => {
+          if (connected || i >= steps.length) return;
+          const [p, label] = steps[i];
+          setProgress(p, label, p === 100);
+          i++;
+          if (i < steps.length) setTimeout(tick, 550 + Math.random() * 500);
+        };
+        tick();
+      }
+
+      connect();
+    })();
+  </script>
+</body>
+
+</html>
